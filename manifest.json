@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Fuck Yandex",
+  "version": "1.0.0",
+  "description": "Blocks all yandex domains.",
+
+  "permissions": [
+    "storage",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+
+  "action": {
+    "default_title": "Fuck Yandex"
+  },
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "blocked.html",
+        "blocked.js",
+        "style.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
