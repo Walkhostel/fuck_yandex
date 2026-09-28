@@ -1,10 +1,11 @@
 const BLOCKED_DOMAINS = new Set([
-  "yandex.ru"
+  "ya.ru"
 ]);
 
 const TEMPORARY_ALLOW = new Map();
+const TAB_HISTORY = new Map();
 
-const ALLOW_TIME = 120_000; //2 min
+const ALLOW_TIME = 120_000;
 
 function normalizeDomain(domain) {
   return domain
@@ -61,18 +62,43 @@ function isTemporarilyAllowed(tabId, hostname) {
   );
 }
 
+browser.webNavigation.onCommitted.addListener(details => {
+  if (details.frameId !== 0) {
+    return;
+  }
+
+  let url;
+
+  try {
+    url = new URL(details.url);
+  } catch {
+    return;
+  }
+
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    return;
+  }
+
+  const old = TAB_HISTORY.get(details.tabId);
+
+  TAB_HISTORY.set(details.tabId, {
+    current: details.url,
+    previous: old?.current ?? null
+  });
+});
+
 browser.runtime.onMessage.addListener((message, sender) => {
+  const tabId = message.tabId ?? sender.tab?.id;
+
+  if (typeof tabId !== "number") {
+    return Promise.resolve({ ok: false });
+  }
+
   if (message.type === "allowOnce") {
-    const tabId = sender.tab?.id;
-
-    if (typeof tabId !== "number") {
-      return { ok: false };
-    }
-
     const hostname = getHostname(message.url);
 
     if (!hostname || !isDomainBlocked(hostname)) {
-      return { ok: false };
+      return Promise.resolve({ ok: false });
     }
 
     TEMPORARY_ALLOW.set(tabId, {
@@ -80,28 +106,27 @@ browser.runtime.onMessage.addListener((message, sender) => {
       expires: Date.now() + ALLOW_TIME
     });
 
-    return { ok: true };
+    return Promise.resolve({ ok: true });
   }
 
   if (message.type === "goBack") {
-    const tabId = sender.tab?.id;
+    const history = TAB_HISTORY.get(tabId);
 
-    if (typeof tabId !== "number") {
-      return { ok: false };
+    if (!history?.previous) {
+      browser.tabs.update(tabId, { url: "about:newtab" });
+      return Promise.resolve({ ok: true });
     }
 
-    browser.tabs.goBack(tabId).catch(() => {
-      browser.tabs.update(tabId, {
-        url: "about:blank"
-      });
-    });
-
-    return { ok: true };
+    browser.tabs.update(tabId, { url: history.previous });
+    return Promise.resolve({ ok: true });
   }
+
+  return Promise.resolve({ ok: false });
 });
 
 browser.tabs.onRemoved.addListener(tabId => {
   TEMPORARY_ALLOW.delete(tabId);
+  TAB_HISTORY.delete(tabId);
 });
 
 browser.webRequest.onBeforeRequest.addListener(
@@ -130,8 +155,15 @@ browser.webRequest.onBeforeRequest.addListener(
     };
   },
   {
-    urls: ["http://*/*", "https://*/*"],
-    types: ["main_frame"]
+    urls: [
+      "http://*/*",
+      "https://*/*"
+    ],
+    types: [
+      "main_frame"
+    ]
   },
-  ["blocking"]
+  [
+    "blocking"
+  ]
 );

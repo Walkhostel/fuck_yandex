@@ -5,9 +5,10 @@
   "description": "Blocks all Yandex domains",
 
   "permissions": [
-    "storage",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "webNavigation",
+    "tabs"
   ],
 
   "host_permissions": [
@@ -22,11 +23,6 @@
 
   "action": {
     "default_title": "Fuck Yandex"
-  },
-
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
   },
 
   "web_accessible_resources": [

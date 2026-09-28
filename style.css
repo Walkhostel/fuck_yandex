@@ -94,3 +94,14 @@ textarea {
 #status {
   margin-left: 12px;
 }
+
+.buttons {
+  position: relative;
+  z-index: 999;
+}
+
+button {
+  position: relative;
+  z-index: 999;
+  pointer-events: all;
+}

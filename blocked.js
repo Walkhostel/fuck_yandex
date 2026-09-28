@@ -5,45 +5,45 @@ const domainElement = document.getElementById("domain");
 const backButton = document.getElementById("back");
 const continueButton = document.getElementById("continue");
 
-let hostname = null;
+let validUrl = null;
 
-if (!originalUrl) {
-  domainElement.textContent = "Исходный URL отсутствует";
-  continueButton.disabled = true;
-} else {
+if (originalUrl) {
   try {
     const url = new URL(originalUrl);
-    hostname = url.hostname;
-
-    domainElement.textContent =
-      `Попытка открыть ${hostname}`;
+    validUrl = url.href;
+    domainElement.textContent = `Попытка открыть ${url.hostname}`;
   } catch {
     domainElement.textContent = "Некорректный URL";
-    continueButton.disabled = true;
   }
+} else {
+  domainElement.textContent = "Исходный URL отсутствует";
 }
 
 backButton.addEventListener("click", async () => {
-  await browser.runtime.sendMessage({
-    type: "goBack"
-  });
+  const tab = await browser.tabs.getCurrent();
+
+  const result = await browser.runtime.sendMessage({
+    type: "goBack",
+    tabId: tab.id
+  }).catch(() => null);
+
+  if (!result?.ok) {
+    history.back();
+  }
 });
 
 continueButton.addEventListener("click", async () => {
-  if (!originalUrl || !hostname) {
-    return;
-  }
+  if (!validUrl) return;
 
-  continueButton.disabled = true;
+  const tab = await browser.tabs.getCurrent();
 
   const result = await browser.runtime.sendMessage({
     type: "allowOnce",
-    url: originalUrl
-  });
+    url: validUrl,
+    tabId: tab.id
+  }).catch(() => null);
 
   if (result?.ok) {
-    window.location.replace(originalUrl);
-  } else {
-    continueButton.disabled = false;
+    window.location.replace(validUrl);
   }
 });
