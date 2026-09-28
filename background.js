@@ -1,5 +1,5 @@
 const DEFAULT_DOMAINS = [
-  "example.com"
+  "yandex.ru"
 ];
 
 const ALLOWED_ONCE = new Map();

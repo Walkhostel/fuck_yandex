@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Fuck Yandex",
+  "name": "Domain Guard",
   "version": "1.0.0",
-  "description": "Blocks all yandex domains.",
+  "description": "Blocks selected domains and asks for confirmation before continuing.",
 
   "permissions": [
     "storage",
@@ -21,7 +21,7 @@
   },
 
   "action": {
-    "default_title": "Fuck Yandex"
+    "default_title": "Domain Guard"
   },
 
   "options_ui": {
