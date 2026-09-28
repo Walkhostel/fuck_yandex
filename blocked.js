@@ -1,29 +1,40 @@
 const params = new URLSearchParams(location.search);
 const originalUrl = params.get("url");
 
+const domainElement = document.getElementById("domain");
+const backButton = document.getElementById("back");
+const continueButton = document.getElementById("continue");
+
+let hostname = null;
+
 if (!originalUrl) {
-  document.getElementById("domain").textContent =
-    "Исходный URL отсутствует.";
+  domainElement.textContent = "Исходный URL отсутствует";
+  continueButton.disabled = true;
 } else {
   try {
     const url = new URL(originalUrl);
+    hostname = url.hostname;
 
-    document.getElementById("domain").textContent =
-      `Вы пытаетесь открыть: ${url.hostname}`;
+    domainElement.textContent =
+      `Попытка открыть ${hostname}`;
   } catch {
-    document.getElementById("domain").textContent =
-      "Некорректный URL.";
+    domainElement.textContent = "Некорректный URL";
+    continueButton.disabled = true;
   }
 }
 
-document.getElementById("back").addEventListener("click", () => {
-  history.back();
+backButton.addEventListener("click", async () => {
+  await browser.runtime.sendMessage({
+    type: "goBack"
+  });
 });
 
-document.getElementById("continue").addEventListener("click", async () => {
-  if (!originalUrl) {
+continueButton.addEventListener("click", async () => {
+  if (!originalUrl || !hostname) {
     return;
   }
+
+  continueButton.disabled = true;
 
   const result = await browser.runtime.sendMessage({
     type: "allowOnce",
@@ -32,5 +43,7 @@ document.getElementById("continue").addEventListener("click", async () => {
 
   if (result?.ok) {
     window.location.replace(originalUrl);
+  } else {
+    continueButton.disabled = false;
   }
 });

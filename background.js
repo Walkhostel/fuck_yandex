@@ -1,16 +1,10 @@
-const DEFAULT_DOMAINS = [
+const BLOCKED_DOMAINS = new Set([
   "yandex.ru"
-];
+]);
 
-const ALLOWED_ONCE = new Map();
+const TEMPORARY_ALLOW = new Map();
 
-async function getBlockedDomains() {
-  const result = await browser.storage.local.get({
-    blockedDomains: DEFAULT_DOMAINS
-  });
-
-  return result.blockedDomains;
-}
+const ALLOW_TIME = 120_000; //2 min
 
 function normalizeDomain(domain) {
   return domain
@@ -22,63 +16,109 @@ function normalizeDomain(domain) {
     .replace(/\.$/, "");
 }
 
-function isBlocked(url, domains) {
-  let parsed;
-
+function getHostname(url) {
   try {
-    parsed = new URL(url);
+    return new URL(url).hostname.toLowerCase();
   } catch {
-    return false;
+    return null;
   }
-
-  if (!["http:", "https:"].includes(parsed.protocol)) {
-    return false;
-  }
-
-  const hostname = parsed.hostname.toLowerCase();
-
-  return domains.some(domain => {
-    domain = normalizeDomain(domain);
-
-    return (
-      hostname === domain ||
-      hostname.endsWith("." + domain)
-    );
-  });
 }
 
-browser.runtime.onMessage.addListener(async message => {
-  if (message.type !== "allowOnce") {
-    return;
+function isDomainBlocked(hostname) {
+  if (!hostname) {
+    return false;
   }
 
-  try {
-    const url = new URL(message.url);
+  for (const domain of BLOCKED_DOMAINS) {
+    const normalized = normalizeDomain(domain);
 
-    ALLOWED_ONCE.set(message.url, Date.now() + 10_000);
+    if (
+      hostname === normalized ||
+      hostname.endsWith("." + normalized)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function isTemporarilyAllowed(tabId, hostname) {
+  const entry = TEMPORARY_ALLOW.get(tabId);
+
+  if (!entry) {
+    return false;
+  }
+
+  if (entry.expires <= Date.now()) {
+    TEMPORARY_ALLOW.delete(tabId);
+    return false;
+  }
+
+  return (
+    hostname === entry.domain ||
+    hostname.endsWith("." + entry.domain)
+  );
+}
+
+browser.runtime.onMessage.addListener((message, sender) => {
+  if (message.type === "allowOnce") {
+    const tabId = sender.tab?.id;
+
+    if (typeof tabId !== "number") {
+      return { ok: false };
+    }
+
+    const hostname = getHostname(message.url);
+
+    if (!hostname || !isDomainBlocked(hostname)) {
+      return { ok: false };
+    }
+
+    TEMPORARY_ALLOW.set(tabId, {
+      domain: hostname,
+      expires: Date.now() + ALLOW_TIME
+    });
 
     return { ok: true };
-  } catch {
-    return { ok: false };
+  }
+
+  if (message.type === "goBack") {
+    const tabId = sender.tab?.id;
+
+    if (typeof tabId !== "number") {
+      return { ok: false };
+    }
+
+    browser.tabs.goBack(tabId).catch(() => {
+      browser.tabs.update(tabId, {
+        url: "about:blank"
+      });
+    });
+
+    return { ok: true };
   }
 });
 
+browser.tabs.onRemoved.addListener(tabId => {
+  TEMPORARY_ALLOW.delete(tabId);
+});
+
 browser.webRequest.onBeforeRequest.addListener(
-  async details => {
-    const domains = await getBlockedDomains();
-
-    if (!isBlocked(details.url, domains)) {
+  details => {
+    if (details.type !== "main_frame") {
       return {};
     }
 
-    const expiration = ALLOWED_ONCE.get(details.url);
+    const hostname = getHostname(details.url);
 
-    if (expiration && expiration > Date.now()) {
-      ALLOWED_ONCE.delete(details.url);
+    if (!isDomainBlocked(hostname)) {
       return {};
     }
 
-    ALLOWED_ONCE.delete(details.url);
+    if (isTemporarilyAllowed(details.tabId, hostname)) {
+      return {};
+    }
 
     const blockedPage =
       browser.runtime.getURL("blocked.html") +
@@ -90,7 +130,7 @@ browser.webRequest.onBeforeRequest.addListener(
     };
   },
   {
-    urls: ["<all_urls>"],
+    urls: ["http://*/*", "https://*/*"],
     types: ["main_frame"]
   },
   ["blocking"]
