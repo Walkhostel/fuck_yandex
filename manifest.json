@@ -4,6 +4,16 @@
   "version": "1.0.0",
   "description": "Blocks all Yandex domains",
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fuck-yandex@walkhostel",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  }
   "permissions": [
     "webRequest",
     "webRequestBlocking",
