@@ -100,3 +100,12 @@ textarea {
 #status {
   margin-left: 12px;
 }
+.license ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.license li {
+  padding: 4px 0;
+}
