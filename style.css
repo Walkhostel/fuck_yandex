@@ -13,8 +13,8 @@ body {
     "Segoe UI",
     sans-serif;
 
-  background: #111;
-  color: #eee;
+  background: #000;
+  color: #fff;
 }
 
 .container {
@@ -25,8 +25,8 @@ body {
 .card {
   padding: 32px;
 
-  background: #1b1b1b;
-  border: 1px solid #333;
+  background: #111;
+  border: 1px solid #222;
   border-radius: 12px;
 }
 
@@ -42,8 +42,8 @@ h2 {
 .license {
   padding: 16px;
 
-  background: #111;
-  border: 1px solid #333;
+  background: #000;
+  border: 1px solid #222;
   border-radius: 8px;
 }
 
@@ -65,11 +65,17 @@ button {
 
   cursor: pointer;
   font-size: 15px;
+
+  background: #c00;
+  color: #fff;
 }
 
-.danger {
-  background: #c33;
-  color: white;
+button:hover {
+  background: #e00;
+}
+
+button:active {
+  background: #a00;
 }
 
 textarea {
@@ -81,10 +87,10 @@ textarea {
 
   resize: vertical;
 
-  background: #111;
-  color: #eee;
+  background: #000;
+  color: #fff;
 
-  border: 1px solid #444;
+  border: 1px solid #333;
   border-radius: 7px;
 
   font-family: monospace;
@@ -93,15 +99,4 @@ textarea {
 
 #status {
   margin-left: 12px;
-}
-
-.buttons {
-  position: relative;
-  z-index: 999;
-}
-
-button {
-  position: relative;
-  z-index: 999;
-  pointer-events: all;
 }
