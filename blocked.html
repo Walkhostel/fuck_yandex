@@ -1,56 +1,35 @@
-<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Доступ заблокирован</title>
-
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title data-i18n="title"></title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <main class="container">
-    <div class="card">
+    <main class="container">
+        <div class="card">
+            <h1 data-i18n="h1"></h1>
+            <p id="domain" data-i18n="domain"></p>
+            
+            <div class="license">
+                <p data-i18n="licenseIntro"></p>
+                <ul>
+                    <li data-i18n="privacy1"></li>
+                    <li data-i18n="privacy2"></li>
+                    <li data-i18n="privacy3"></li>
+                    <li data-i18n="privacy4"></li>
+                    <li data-i18n="privacy5"></li>
+                </ul>
+            </div>
 
-      <h1>Доступ к яндексу ограничен</h1>
-
-      <p id="domain"></p>
-
-      <div class="license">
-        <p>
-          Перед переходом ознакомьтесь с лицензионным соглашением:
-        </p>
-
-        <ul>            
-          <li>Какую Персональную информацию о Вас собирает Яндекс</li>
-          <li>(i) Персональная информация, предоставленная Вами при регистрации (создании учетной записи), такая как Ваше имя, номер телефона, адрес и возраст;<li>
-          <li>(ii) электронные данные (HTTP-заголовки, IP-адрес, файлы cookie, веб-маяки/пиксельные теги, данные об идентификаторе браузера, информация об аппаратном и программном обеспечении, данные сети wi-fi);<li>
-          <li>(iii) дата и время осуществления доступа к Сайтам и/или Сервисам;<li>
-          <li>(iv) информация о Вашей активности во время использования Сайтов и/или Сервисов (например, история поисковых запросов, данные о покупках в Сервисах, данные о посещенных организациях, лайки и предпочтения, адреса электронной почты тех, с кем Вы ведете переписку, данные телефонной книги, информация о взаимодействии с другими пользователями, а также файлы и контент, хранящиеся в системах Яндекса);<li>
-          <li>(v) информация о геолокации;<li>
-          <li>(из https://yandex.ru/legal/confidential/ru/ пункт 4)<li> 
-          <li>КРАТКИЙ ПЕРЕВОД:<li>
-                  <li>Яндекс будет собирать ваш фингерпринт на основе таких данных как: браузер, ос, сети wifi, системная дата и время, геолокация. Благодаря ним они смогут привязывать все это к вашей почте и аккаунту, чтобы даже когда вы занимались чем то без логина, яндекс знали кто именно делает очередной запрос<li>
-        </ul>
-      </div>
-
-      <p class="question">
-        Точно хотите продолжить?
-      </p>
-
-      <div class="buttons">
-        <button id="back">
-          Вернуться
-        </button>
-
-        <button id="continue" class="danger">
-          Продолжить
-        </button>
-      </div>
-
-    </div>
-  </main>
-
-  <script src="blocked.js"></script>
+            <p class="question" data-i18n="question"></p>
+            
+            <div class="buttons">
+                <button id="back" data-i18n="backButton"></button>
+                <button id="continue" class="danger" data-i18n="continueButton"></button>
+            </div>
+        </div>
+    </main>
+    <script src="blocked.js"></script>
 </body>
 </html>
