@@ -3,6 +3,7 @@
   "name": "Fuck Yandex",
   "version": "1.0.0",
   "description": "Blocks all Yandex domains",
+  "default_locale": "ru",
 
   "browser_specific_settings": {
     "gecko": {

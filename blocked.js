@@ -1,3 +1,8 @@
+document.querySelectorAll('[data-i18n]').forEach(el => {
+  const msg = browser.i18n.getMessage(el.dataset.i18n);
+  if (msg) el.textContent = msg;
+});
+
 const params = new URLSearchParams(location.search);
 const originalUrl = params.get("url");
 
@@ -11,17 +16,16 @@ if (originalUrl) {
   try {
     const url = new URL(originalUrl);
     validUrl = url.href;
-    domainElement.textContent = `Попытка открыть ${url.hostname}`;
+    domainElement.textContent = browser.i18n.getMessage("domain", url.hostname);
   } catch {
-    domainElement.textContent = "Некорректный URL";
+    domainElement.textContent = browser.i18n.getMessage("invalidUrl");
   }
 } else {
-  domainElement.textContent = "Исходный URL отсутствует";
+  domainElement.textContent = browser.i18n.getMessage("noUrl");
 }
 
 backButton.addEventListener("click", async () => {
   const tab = await browser.tabs.getCurrent();
-
   const result = await browser.runtime.sendMessage({
     type: "goBack",
     tabId: tab.id
@@ -34,9 +38,7 @@ backButton.addEventListener("click", async () => {
 
 continueButton.addEventListener("click", async () => {
   if (!validUrl) return;
-
   const tab = await browser.tabs.getCurrent();
-
   const result = await browser.runtime.sendMessage({
     type: "allowOnce",
     url: validUrl,
@@ -47,3 +49,4 @@ continueButton.addEventListener("click", async () => {
     window.location.replace(validUrl);
   }
 });
+

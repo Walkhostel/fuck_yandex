@@ -1,0 +1,20 @@
+{
+  "title": {"message": "Access is blocked"},
+  "h1": {"message": "Access to Yandex is restricted"},
+  "domain": {"message": "Access to {domain} is restricted"},
+  "licenseIntro": {"message": "Please read the license agreement before proceeding:"},
+  "privacy0": {"message": "What Personal Information Does Yandex Collect About You?"},
+  "privacy1": {"message": "(i) Personal information you provide during registration (when creating an account), such as your name, phone number, address, and age;"},
+  "privacy2": {"message": "(ii) electronic data (HTTP headers, IP address, cookies, web beacons/pixel tags, browser identifier data, hardware and software information, Wi-Fi network data);"},
+  "privacy3": {"message": "(iii) the date and time you access the Sites and/or Services;"},
+  "privacy4": {"message": "(iv) information about your activity while using the Sites and/or Services (for example, search history, purchase data on the Services, data on organizations visited, likes and preferences, email addresses of those with whom you correspond, contact list data, information about interactions with other users, as well as files and content stored on Yandex’s systems);"},
+  "privacy5": {"message": "(v) geolocation information;"},
+  "sourse": {"message": "(from https://yandex.ru/legal/confidential/ru/, paragraph 4)"},
+  "translate": {"message": "A BREAF TRANSLATION FROM LEGAL:"},
+  "translatetitle": {"message": "Yandex will collect your fingerprint based on data such as: browser, operating system, Wi-Fi networks, system date and time, and geolocation. This will allow them to link all of this to your email and account so that even when you’re doing something without being logged in, Yandex will know exactly who is making the next request"},
+  "question": {"message": "Are you sure you want to continue?"},
+  "backButton": {"message": "Back"},
+  "continueButton": {"message": "Continue"},
+  "invalidUrl": {"message": "Invalid URL"},
+  "noUrl": {"message": "No source URL"}
+}
